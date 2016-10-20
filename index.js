@@ -1,13 +1,15 @@
 var ctx;
 var pixel = 20;
-var matrixWidth  = 30;
-var matrixHeight = 20;
+var matrixWidth  = 12;
+var matrixHeight = 12;
 var WIDTH = pixel*matrixWidth;
 var HEIGHT = pixel*matrixHeight;
 var food;
-var matrix;
 var snake = {};
 var keyPressed;
+var updateInterval = 500;
+var clock = 0;
+var stopped = true;
 
 class SnakeBlock {
   constructor(x = matrixWidth/2, y = matrixHeight/2) {
@@ -24,12 +26,8 @@ class Food {
 }
 
 function reset() {
-  clear();
-  renderArena();
-  generateMatrix();
   generateSnake();
   generateFood();
-  renderFood();
 }
 
 function init() {
@@ -38,11 +36,7 @@ function init() {
   canvas.width  = WIDTH;
   canvas.height = HEIGHT;
   reset();
-  return setInterval(draw, 50);
-}
-
-function clear() {
-  ctx.clearRect(0, 0, WIDTH, HEIGHT);
+  return setInterval(draw, updateInterval/2);
 }
 
 function generateFood() {
@@ -53,54 +47,47 @@ function generateFood() {
   } while (haveSnake(randomX, randomY));
 
   food = new Food(randomX, randomY);
-  matrix[randomX][randomY] = food; 
-
 }
 
 function generateSnake() {
   snake.status = "ALIVE";
-  snake.direction = "undefined";
+  snake.direction = undefined;
   snake.blocks = [];
   snake.blocks[0] = new SnakeBlock();
 }
 
-function generateMatrix() {
-  matrix = new Array(matrixWidth);
-  matrix.fill(new Array(matrixHeight));
+function haveSnake(x, y, tail = true) {
+  for (var i = 0; i < snake.blocks.length - !tail; i++) {
+    if (snake.blocks[i].x == x && snake.blocks[i].y == y) return true;
+  }
+  return false;
 }
 
-function haveSnake(x, y) {
-  var result = false;
-  snake.blocks.forEach(function (item) {
-    if (item.x == x && item.y == y) result = true;
-  });
-  return result;
-}
 
 function moveSnake() {
   switch (snake.direction) {
     case "UP":  /* Up arrow was pressed */
-      if (snake.blocks[0].y - 1 >= 0 && !(haveSnake(snake.blocks[0].x, snake.blocks[0].y - 1))) {
+      if (snake.blocks[0].y - 1 >= 0 && !(haveSnake(snake.blocks[0].x, snake.blocks[0].y - 1, false))) {
         snake.blocks.unshift(new SnakeBlock(snake.blocks[0].x, snake.blocks[0].y - 1));
       } else snake.status = "DEAD";
       break;
     case "DOWN":  /* Down arrow was pressed */
-      if (snake.blocks[0].y + 1 < matrixHeight && !(haveSnake(snake.blocks[0].x, snake.blocks[0].y + 1))) {
+      if (snake.blocks[0].y + 1 < matrixHeight && !(haveSnake(snake.blocks[0].x, snake.blocks[0].y + 1, false))) {
         snake.blocks.unshift(new SnakeBlock(snake.blocks[0].x, snake.blocks[0].y + 1));
       } else snake.status = "DEAD";
       break;
     case "LEFT":  /* Left arrow was pressed */
-      if (snake.blocks[0].x - 1 >= 0 && !(haveSnake(snake.blocks[0].x - 1, snake.blocks[0].y))) {
+      if (snake.blocks[0].x - 1 >= 0 && !(haveSnake(snake.blocks[0].x - 1, snake.blocks[0].y, false))) {
         snake.blocks.unshift(new SnakeBlock(snake.blocks[0].x - 1, snake.blocks[0].y));
       } else snake.status = "DEAD";             
       break;  
     case "RIGHT":  /* Right arrow was pressed */
-      if (snake.blocks[0].x + 1 < matrixWidth && !(haveSnake(snake.blocks[0].x + 1, snake.blocks[0].y))) {
+      if (snake.blocks[0].x + 1 < matrixWidth && !(haveSnake(snake.blocks[0].x + 1, snake.blocks[0].y, false))) {
         snake.blocks.unshift(new SnakeBlock(snake.blocks[0].x + 1, snake.blocks[0].y));
       } else snake.status = "DEAD";
       break;
-    default:
-      snake.blocks.unshift(new SnakeBlock());
+    default: 
+    snake.blocks.push(new SnakeBlock());
   }
 }
 
@@ -155,31 +142,34 @@ function renderFood(){
   ctx.stroke();
 }
 
-function renderMatrix() {
-  clear();
+function renderAll() {
   renderArena();
   renderSnake();
-  matrix.forEach(line => line.forEach(function(item) {
-    if (item instanceof Food) {
-      renderFood();
-    }
-  }));
+  renderFood();
+}
+
+function flipflop() {
+  if (clock) clock = 0;
+  else clock = 1;
+  return clock;
 }
     
 function draw() {
-  
+
   keyPressed = false;
 
   if (snake.status == "ALIVE") {
-    renderMatrix();
-    moveSnake();
-
-    if ( snake.blocks[0].x == food.x && snake.blocks[0].y == food.y ) { 
-      generateFood();
-      renderFood();
+    if (flipflop()) {
+      renderAll();
     } else {
-      snake.blocks.pop();
-    }
+      moveSnake();
+      if ( snake.blocks[0].x == food.x && snake.blocks[0].y == food.y ) { 
+        generateFood();
+        renderFood();
+      } else {
+        snake.blocks.pop();      
+      }
+    } 
   } else {
     message("You are dead!", "red");
   }
