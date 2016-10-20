@@ -1,0 +1,11 @@
+h2 {
+  font-family: Helvetica;
+}
+
+#score {
+  color: purple;
+}
+
+#foodsEaten {
+  color: green;
+}
