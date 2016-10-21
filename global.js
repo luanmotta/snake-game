@@ -1,0 +1,10 @@
+var ctx,
+    updateInterval = 150,
+    pixel          = 20,
+    matrixWidth    = 30,
+    matrixHeight   = 16,
+    WIDTH          = pixel*matrixWidth,
+    HEIGHT         = pixel*matrixHeight,
+    margin         = pixel*0.2,
+    snake          = {},
+    food;
