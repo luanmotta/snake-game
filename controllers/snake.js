@@ -11,6 +11,9 @@ function generateSnake() {
   snake.direction = undefined;
   snake.blocks = [];
   snake.blocks[0] = new SnakeBlock();
+  snake.r = 0;
+  snake.g = 0;
+  snake.b = 0;
 }
 
 function renderSnake() {
@@ -49,23 +52,30 @@ function renderSnake() {
     // use this for squared snake -> ctx.rect(block.x * pixel, block.y * pixel, pixel, pixel);
 
     ctx.closePath();
-    ctx.fillStyle = snakeColor(index);
+    ctx.fillStyle = snakeColor(index + 1);
     ctx.fill();
     ctx.stroke();
   });
 }
 
 function snakeColor(index) {
-  var decreaseFactor = 4,
-      r = 152,
-      g = 52,
-      b = 152;
+  var decreaseFactor;
 
-  decreaseFactor *= index;
+  if (index > (WIDTH * HEIGHT / 12)) decreaseFactor = 1;
+  else if (index > (WIDTH * HEIGHT / 6)) decreaseFactor = 3;
+  else decreaseFactor = 4;
 
-  if (decreaseFactor <= r) return `rgb(${r - decreaseFactor}, ${g}, ${b})`;
-  else if (decreaseFactor <= r+g) return `rgb(0, ${r + g - decreaseFactor}, ${b})`;
-  else if (decreaseFactor <= r+g+b ) return `rgb(0,0, ${r + g + b - decreaseFactor})`;
+  decreaseFactor = Math.round(decreaseFactor * index);
+
+  if  (snake.r < decreaseFactor && snake.g < decreaseFactor && snake.b < decreaseFactor) {
+    snake.r = Math.floor(Math.random() * 255); // 152 is good
+    snake.g = Math.floor(Math.random() * 255); // 52 is good
+    snake.b = Math.floor(Math.random() * 255); // 152 is good
+  }
+
+  if (snake.r >= decreaseFactor ) return `rgb(${snake.r - decreaseFactor}, ${snake.g}, ${snake.b})`;
+  else if (snake.r + snake.g >= decreaseFactor ) return `rgb(0, ${snake.r + snake.g - decreaseFactor}, ${snake.b})`;
+  else if (snake.r + snake.g + snake.b >= decreaseFactor ) return `rgb(0,0, ${snake.r + snake.g + snake.b - decreaseFactor})`;
   return "rgb(0, 0, 0)";
 }
 

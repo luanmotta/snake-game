@@ -1,11 +1,11 @@
-var keyPressed;
-var clock = 0;
-var foodsEaten = 0;
-var score = 0;
-var record = 0;
-var foodElement   = document.getElementById("foodsEaten");
-var scoreElement  = document.getElementById("score");
-var recordElement = document.getElementById("record");
+var keyPressed,
+    clock = 0,
+    foodsEaten = 0,
+    record = 0,
+    foodElement   = document.getElementById("foodsEaten"),
+    scoreElement  = document.getElementById("score"),
+    recordElement = document.getElementById("record"),
+    score         = 0;
 
 function reset() {
   generateSnake();
@@ -67,10 +67,11 @@ function tryEat() {
     generateFood();
     renderFood();
     foodsEaten++;
-    score = Math.round( (foodsEaten*500)  / (matrixWidth/4) / (matrixHeight/4) / (updateInterval/50));
+    score = scoreFormula();
 
-  } else snake.blocks.pop();    
+  }  else snake.blocks.pop();    
 }  
+
 
 function draw() {
 
