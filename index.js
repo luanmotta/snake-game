@@ -125,24 +125,36 @@ function renderSnake() {
   snake.blocks.forEach(function (block, index) {
     ctx.beginPath();
       switch (block.direction) {
-      case "UP"    : ctx.rect(block.x * pixel, block.y * pixel  + (pixel/2) , pixel - margin, pixel * (1 + ((!index)/2))); break;
-      case "DOWN"  : ctx.rect(block.x * pixel, block.y * pixel  - pixel/2, pixel - margin, pixel * (1 + ((!index)/2))); break;
-      case "LEFT"  : ctx.rect(block.x * pixel  + (pixel/2), block.y * pixel, pixel * (1 + ((!index)/2)), pixel - margin); break;
-      case "RIGHT" : ctx.rect(block.x * pixel  - pixel/2, block.y * pixel, pixel * (1 + ((!index)/2)), pixel - margin); break;
-      default      : ctx.rect(block.x * pixel, block.y * pixel, pixel, pixel);
+      case "UP"    : ctx.rect(block.x * pixel,
+                     block.y * pixel  + (pixel/2 * (index > 0) ),
+                     pixel - margin,
+                     pixel * (1 + ((!index)/2)));
+                     break;
+
+      case "DOWN"  : ctx.rect(block.x * pixel,
+                     block.y * pixel  - pixel/2,
+                     pixel - margin,
+                     pixel * (1 + ((!index)/2)));
+                     break;
+
+      case "LEFT"  : ctx.rect(block.x * pixel  + (pixel/2 * (index > 0) ),
+                     block.y * pixel, pixel * (1 + ((!index)/2)),
+                     pixel - margin);
+                     break;
+
+      case "RIGHT" : ctx.rect(block.x * pixel  - pixel/2,
+                     block.y * pixel, pixel * (1 + ((!index)/2)),
+                     pixel - margin);
+                     break;
+
+      default      : ctx.rect(block.x * pixel,
+                     block.y * pixel  - pixel/2,
+                     pixel - margin,
+                     pixel * (1 + ((!index)/2)));
     }
-    
+
     ctx.closePath();
-    if (index == 0) {
-     /* switch (block.direction) {
-        case "UP"    : ctx.rect(block.x * pixel, block.y * pixel, pixel - margin, pixel*1.5); break;
-        case "DOWN"  : ctx.rect(block.x * pixel, block.y * pixel - pixel/2 , pixel - margin, pixel*1.5); break;
-        case "LEFT"  : ctx.rect(block.x * pixel, block.y * pixel, pixel*1.5, pixel - margin); break;
-        case "RIGHT" : ctx.rect(block.x * pixel - pixel/2 , block.y * pixel, pixel*1.5, pixel - margin); break;
-        default      : ctx.rect(block.x * pixel, block.y * pixel, pixel, pixel);
-      }*/
-        ctx.fillStyle = "blue";
-    } 
+    if (index == 0) ctx.fillStyle = "blue";
     else if (index == snake.blocks.length - 1) ctx.fillStyle = "red";
     else ctx.fillStyle = "purple";
     ctx.fill();
