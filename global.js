@@ -1,6 +1,6 @@
 var ctx,
-    updateInterval = 150,
-    pixel          = 20,
+    updateInterval = 100,
+    pixel          = 30,
     matrixWidth    = 10,
     matrixHeight   = 10,
     WIDTH          = pixel*matrixWidth,

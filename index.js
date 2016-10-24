@@ -1,13 +1,13 @@
 var keyPressed,
-    clock = 0,
-    foodsEaten = 0,
-    record = 0,
-    foodElement   = document.getElementById("foodsEaten"),
-    scoreElement  = document.getElementById("score"),
-    recordElement = document.getElementById("record"),
-    score         = 0;
+    clock               = 0,
+    foodsEaten          = 0,
+    foodElement         = document.getElementById("foodsEaten"),
+    scoreElement        = document.getElementById("score"),
+    recordElement       = document.getElementById("record"),
+    score               = 0;
 
 function reset() {
+  if (localStorage.record == undefined) localStorage.record = 0;
   generateSnake();
   generateFood();
   foodsEaten = 0;
@@ -42,7 +42,7 @@ function renderAll() {
   renderFood();
   foodElement.innerHTML = `Foods Eaten: ${foodsEaten}`;
   scoreElement.innerHTML = `Score: ${score}`;
-  recordElement.innerHTML = `Record: ${record}`;
+  recordElement.innerHTML = `Record: ${localStorage.record}`;
 }
 
 function flipflop() {
@@ -53,10 +53,10 @@ function flipflop() {
 
 function deadSneak() {
   keyPressed = false;
-  if (score < record) {
+  if (score < localStorage.record) {
     message("You are dead!", "red");
   } else {
-    record = score;
+    localStorage.record = score;
     message("New record!", "green");
   }
 }

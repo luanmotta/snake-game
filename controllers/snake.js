@@ -19,7 +19,7 @@ function generateSnake() {
 function renderSnake() {
   snake.blocks.forEach(function (block, index) {
     ctx.beginPath();
-      switch (block.direction) {
+      /*switch (block.direction) {
 
         case "UP"    : ctx.rect(block.x * pixel,
                       block.y * pixel  + (pixel/2 * (index > 0) ),
@@ -47,9 +47,10 @@ function renderSnake() {
                       block.y * pixel  - pixel/2,
                       pixel - margin,
                       pixel * (1 + ((!index)/2)));
-    }
+    }*/
 
-    // use this for squared snake -> ctx.rect(block.x * pixel, block.y * pixel, pixel, pixel);
+    // use this for squared snake -> 
+    ctx.rect(block.x * pixel, block.y * pixel, pixel, pixel);
 
     ctx.closePath();
     ctx.fillStyle = snakeColor(index + 1);
@@ -61,8 +62,10 @@ function renderSnake() {
 function snakeColor(index) {
   var decreaseFactor;
 
-  if (index > (WIDTH * HEIGHT / 12)) decreaseFactor = 1;
-  else if (index > (WIDTH * HEIGHT / 6)) decreaseFactor = 3;
+  if (snake.blocks.lenght >= matrixWidth * matrixHeight * 0.1 ) { 
+    decreaseFactor = 1;
+  }
+  else if (snake.blocks.lenght >= matrixWidth * matrixHeight * 0.2)  decreaseFactor = 3;
   else decreaseFactor = 4;
 
   decreaseFactor = Math.round(decreaseFactor * index);
