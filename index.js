@@ -1,5 +1,14 @@
 let keyPressed
 let clock = 0
+// Total games per epoch
+let totalPopulation = 1;
+// All active games (snakes that not died yet)
+let activeGames = [];
+// All games for any given population
+let allGames = [];
+// Best snake of all time
+let bestSnake = null
+let highScore = 0
 
 const oppositeDirections = {
   'LEFT': 'RIGHT',
@@ -31,20 +40,52 @@ function flipflop() {
 }
 
 function process() {
-  if (!gm.snake.isDead) {
+  // Process Game
+  for (let i = 0; i < activeGames.length; i++) {
+    let gm = activeGames[i]
+    if (gm.snake.isDead) {
+      keyPressed = false;
+      gm.endGame();
+      activeGames.splice(i, 1)
+      i--
+      continue
+    }
     if (flipflop()) {
-      gm.renderGame();
+      if (i === 0) { // TODO: Watch only bestSnake
+        gm.renderGame();
+      }
     } else {
       keyPressed = false;
+      gm.snake.think()
       gm.computeMovement()
     }
-  } else {
-    keyPressed = false;
-    gm.endGame();
+  }
+  // Calculate the best score
+  let tempHighScore = 0;
+  let tempBestSnake = null;
+  for (let i = 0; i < activeGames.length; i++) {
+    let s = activeGames[i].score;
+    if (s > tempHighScore) {
+      tempHighScore = s;
+      tempBestSnake = activeGames[i];
+    }
+    // Is it the all time high scorer?
+    if (tempHighScore > highScore) {
+      highScore = tempHighScore;
+      bestSnake = tempBestSnake;
+    }
+  }
+  if (activeGames.length == 0) {
+    nextGeneration();
   }
 }
 
-const gm = new GM()
-gm.reset();
+// Create games/population
+for (let i = 0; i < totalPopulation; i++) {
+  let gm = new GM();
+  gm.reset()
+  activeGames[i] = gm;
+  allGames[i] = gm;
+}
 setInterval(process, UPDATE_INTERVAL / 2);
-window.addEventListener("keydown", doKeyDown, true);
+// window.addEventListener("keydown", doKeyDown, true);

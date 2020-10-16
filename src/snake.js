@@ -5,15 +5,79 @@ class SnakeBlock {
   }
 }
 
+const getDirection = (outputs) => {
+  // Decide direction
+  let maxValue = { value: outputs[0], index: 0 }
+  outputs.forEach((value, index) => {
+    if (value > maxValue.value) {
+      maxValue.value = value
+      maxValue.index = index
+    }
+  })
+  const directionValues = {
+    0: 'LEFT',
+    1: 'UP',
+    2: 'RIGHT',
+    3: 'DOWN'
+  }
+  return directionValues[maxValue.index]
+}
+
+
+function randomGaussian(mean, sd) {
+  var y1, x1, x2, w;
+  do {
+    x1 = Math.random(2) - 1;
+    x2 = Math.random(2) - 1;
+    w = x1 * x1 + x2 * x2;
+  } while (w >= 1);
+  w = Math.sqrt(-2 * Math.log(w) / w);
+  y1 = x1 * w;
+  y2 = x2 * w;
+  var m = mean || 0;
+  var s = sd || 1;
+  return y1 * s + m;
+};
+
+// Mutation function to be passed into snake.brain
+function mutate(x) {
+  if (Math.random(1) < 0.1) {
+    let offset = randomGaussian() * 0.5;
+    let newx = x + offset;
+    return newx;
+  } else {
+    return x;
+  }
+}
+
 class Snake {
-  constructor() {
+  constructor(brain) {
     this.isDead = false;
-    this.direction = undefined;
+    this.direction = 'UP';
     this.blocks = [];
     this.blocks[0] = new SnakeBlock(MATRIX_WIDTH / 2, MATRIX_HEIGHT / 2);
     this.r = 0;
     this.g = 0;
     this.b = 0;
+
+    // Is this a copy of another Snake or a new one?
+    // The Neural Network is the snake's "brain"
+    if (brain instanceof NeuralNetwork) {
+      this.brain = brain.copy();
+      this.brain.mutate(mutate);
+    } else {
+      this.brain = new NeuralNetwork(2, 8, 4);
+    }
+
+    // Score is how many frames it's been alive
+    this.score = 0;
+    // Fitness is normalized version of score
+    this.fitness = 0;
+  }
+
+  // Create a copy of this snake
+  copy() {
+    return new Snake(this.brain);
   }
 
   move() {
@@ -43,12 +107,35 @@ class Snake {
       this.blocks.push(new SnakeBlock());
     }
   }
+
+  // This is the key function now that decides
+  // if it should jump or not jump!
+  think() {
+    // Now create the inputs to the neural network
+    let inputs = [];
+    // x position of the snake
+    inputs[0] = this.blocks[0].x;
+    // y position of the snake
+    inputs[1] = this.blocks[0].y;
+    // Get the outputs from the network
+    let outputs = this.brain.predict(inputs);
+
+    this.changeDirection(getDirection(outputs))
+  }
+
+  changeDirection(direction) {
+    if (direction !== oppositeDirections[this.direction]) {
+      this.direction = direction
+    }
+  }
+
   haveSnake(x, y) {
     for (var i = 0; i < this.blocks.length; i++) {
       if (this.blocks[i].x == x && this.blocks[i].y == y) return true;
     }
     return false;
   }
+
   snakeColor(index) {
     var decreaseFactor;
 

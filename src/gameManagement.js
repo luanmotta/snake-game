@@ -26,18 +26,13 @@ class GM {
     if (key === 'ENTER') {
       this.reset()
     }
-    if (key !== oppositeDirections[this.snake.direction]) {
-      this.changeSnakeDirection(key)
-    }
+    this.snake.changeDirection(key)
   }
 
   computeMovement() {
+    this.score++
     this.snake.move();
     this.tryToEat();
-  }
-
-  changeSnakeDirection(direction) {
-    this.snake.direction = direction
   }
 
   tryToEat() {
@@ -45,9 +40,8 @@ class GM {
       this.generateFood()
       this.foodsEaten++;
       this.score = this.scoreFormula();
-    } else {
-      this.snake.blocks.pop();
     }
+    this.snake.blocks.pop();
   }
 
   generateFood() {
@@ -59,12 +53,13 @@ class GM {
   }
 
   endGame() {
+    this.fitness = this.score
     if (this.score < localStorage.record) {
-      this.canvas.renderMessage("You are dead!", "red");
+      // this.canvas.renderMessage("You are dead!", "red");
     } else {
       localStorage.record = this.score;
       this.record = this.score
-      this.canvas.renderMessage("New record!", "green");
+      // this.canvas.renderMessage("New record!", "green");
     }
   }
 
