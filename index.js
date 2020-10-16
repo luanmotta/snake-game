@@ -1,16 +1,18 @@
-var keyPressed
-var clock = 0
+let keyPressed
+let clock = 0
+
+const keyboardKeys = {
+  37: 'LEFT',
+  38: 'UP',
+  39: 'RIGHT',
+  40: 'DOWN',
+  13: 'ENTER'
+}
 
 function doKeyDown(evt) {
   if (keyPressed == false) {
-    const direction = keyboardKeys[evt.keyCode]
-    switch (direction) {
-      case 'LEFT':  if ( snake.direction != "RIGHT" ) gm.moveSnake(direction);  break;
-      case 'UP':    if ( snake.direction != "DOWN" )  gm.moveSnake(direction);  break;
-      case 'RIGHT': if ( snake.direction != "LEFT" )  gm.moveSnake(direction);  break;
-      case 'DOWN':  if ( snake.direction != "UP" )    gm.moveSnake(direction);  break;
-      case 'ENTER': gm.reset();
-    }
+    const key = keyboardKeys[evt.keyCode]
+    gm.manageKeyPress(key)
   }
   keyPressed = true;
 }

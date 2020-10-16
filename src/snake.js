@@ -1,19 +1,47 @@
 class SnakeBlock {
-  constructor(x = MATRIX_WIDTH / 2, y = MATRIX_HEIGHT / 2, snakeDirection) {
+  constructor(x = MATRIX_WIDTH / 2, y = MATRIX_HEIGHT / 2) {
     this.x = x;
     this.y = y;
-    this.direction = snakeDirection;
   }
 }
 
-function generateSnake() {
-  snake.status = "ALIVE";
-  snake.direction = undefined;
-  snake.blocks = [];
-  snake.blocks[0] = new SnakeBlock();
-  snake.r = 0;
-  snake.g = 0;
-  snake.b = 0;
+class Snake {
+  constructor() {
+    this.status = "ALIVE";
+    this.direction = undefined;
+    this.blocks = [];
+    this.blocks[0] = new SnakeBlock();
+    this.r = 0;
+    this.g = 0;
+    this.b = 0;
+  }
+
+  move() {
+    switch (snake.direction) {
+      case "UP":  /* Up arrow was pressed */
+        if (snake.blocks[0].y - 1 >= 0 && !(haveSnake(snake.blocks[0].x, snake.blocks[0].y - 1, false))) {
+          snake.blocks.unshift(new SnakeBlock(snake.blocks[0].x, snake.blocks[0].y - 1));
+        } else snake.status = "DEAD";
+        break;
+      case "DOWN":  /* Down arrow was pressed */
+        if (snake.blocks[0].y + 1 < MATRIX_HEIGHT && !(haveSnake(snake.blocks[0].x, snake.blocks[0].y + 1, false))) {
+          snake.blocks.unshift(new SnakeBlock(snake.blocks[0].x, snake.blocks[0].y + 1));
+        } else snake.status = "DEAD";
+        break;
+      case "LEFT":  /* Left arrow was pressed */
+        if (snake.blocks[0].x - 1 >= 0 && !(haveSnake(snake.blocks[0].x - 1, snake.blocks[0].y, false))) {
+          snake.blocks.unshift(new SnakeBlock(snake.blocks[0].x - 1, snake.blocks[0].y));
+        } else snake.status = "DEAD";
+        break;
+      case "RIGHT":  /* Right arrow was pressed */
+        if (snake.blocks[0].x + 1 < MATRIX_WIDTH && !(haveSnake(snake.blocks[0].x + 1, snake.blocks[0].y, false))) {
+          snake.blocks.unshift(new SnakeBlock(snake.blocks[0].x + 1, snake.blocks[0].y));
+        } else snake.status = "DEAD";
+        break;
+      default:
+      snake.blocks.push(new SnakeBlock());
+    }
+  }
 }
 
 function snakeColor(index) {
@@ -44,31 +72,4 @@ function haveSnake(x, y, tail = true) {
     if (snake.blocks[i].x == x && snake.blocks[i].y == y) return true;
   }
   return false;
-}
-
-function moveSnake() {
-  switch (snake.direction) {
-    case "UP":  /* Up arrow was pressed */
-      if (snake.blocks[0].y - 1 >= 0 && !(haveSnake(snake.blocks[0].x, snake.blocks[0].y - 1, false))) {
-        snake.blocks.unshift(new SnakeBlock(snake.blocks[0].x, snake.blocks[0].y - 1, snake.direction));
-      } else snake.status = "DEAD";
-      break;
-    case "DOWN":  /* Down arrow was pressed */
-      if (snake.blocks[0].y + 1 < MATRIX_HEIGHT && !(haveSnake(snake.blocks[0].x, snake.blocks[0].y + 1, false))) {
-        snake.blocks.unshift(new SnakeBlock(snake.blocks[0].x, snake.blocks[0].y + 1, snake.direction));
-      } else snake.status = "DEAD";
-      break;
-    case "LEFT":  /* Left arrow was pressed */
-      if (snake.blocks[0].x - 1 >= 0 && !(haveSnake(snake.blocks[0].x - 1, snake.blocks[0].y, false))) {
-        snake.blocks.unshift(new SnakeBlock(snake.blocks[0].x - 1, snake.blocks[0].y, snake.direction));
-      } else snake.status = "DEAD";
-      break;
-    case "RIGHT":  /* Right arrow was pressed */
-      if (snake.blocks[0].x + 1 < MATRIX_WIDTH && !(haveSnake(snake.blocks[0].x + 1, snake.blocks[0].y, false))) {
-        snake.blocks.unshift(new SnakeBlock(snake.blocks[0].x + 1, snake.blocks[0].y, snake.direction));
-      } else snake.status = "DEAD";
-      break;
-    default:
-    snake.blocks.push(new SnakeBlock());
-  }
 }

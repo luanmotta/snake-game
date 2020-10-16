@@ -1,4 +1,3 @@
-var ctx
 const UPDATE_INTERVAL = 100
 const PIXEL_SIZE      = 30
 const MATRIX_WIDTH    = 16
@@ -6,31 +5,33 @@ const MATRIX_HEIGHT   = 16
 const WIDTH           = PIXEL_SIZE * MATRIX_WIDTH
 const HEIGHT          = PIXEL_SIZE * MATRIX_HEIGHT
 const MARGIN          = PIXEL_SIZE * 0.2
+
 let foodsEaten          = 0
 let score               = 0
-var snake             = {}
+var snake               = null
 var food
-
-
-const keyboardKeys = {
-  37: 'LEFT',
-  38: 'UP',
-  39: 'RIGHT',
-  40: 'DOWN',
-  13: 'ENTER'
-}
 
 class GM {
   constructor() {
     //
   }
 
+  manageKeyPress(key) {
+    switch (key) {
+      case 'LEFT':  if ( snake.direction != "RIGHT" ) this.changeSnakeDirection(key);  break;
+      case 'UP':    if ( snake.direction != "DOWN" )  this.changeSnakeDirection(key);  break;
+      case 'RIGHT': if ( snake.direction != "LEFT" )  this.changeSnakeDirection(key);  break;
+      case 'DOWN':  if ( snake.direction != "UP" )    this.changeSnakeDirection(key);  break;
+      case 'ENTER': this.reset();
+    }
+  }
+
   computeMovement() {
-    moveSnake();
+    snake.move();
     this.tryToEat();
   }
 
-  moveSnake(direction) {
+  changeSnakeDirection(direction) {
     snake.direction = direction
   }
 
@@ -38,7 +39,7 @@ class GM {
     if ( snake.blocks[0].x == food.x && snake.blocks[0].y == food.y ) {
       foodEated()
       foodsEaten++;
-      score = scoreFormula();
+      score = this.scoreFormula();
     } else {
       snake.blocks.pop();
     }
@@ -58,15 +59,15 @@ class GM {
     if (localStorage.record == undefined) {
       localStorage.record = 0;
     }
-    generateSnake();
+    snake = new Snake();
     generateFood();
     foodsEaten = 0;
     score = 0;
   }
-}
 
-const scoreFormula = () => {
-  return Math.round(
-    (foodsEaten * 500) / (MATRIX_WIDTH / 4) / (MATRIX_HEIGHT / 4) / (UPDATE_INTERVAL / 50)
-  );
+  scoreFormula () {
+    return Math.round(
+      (foodsEaten * 500) / (MATRIX_WIDTH / 4) / (MATRIX_HEIGHT / 4) / (UPDATE_INTERVAL / 50)
+    );
+  }
 }
