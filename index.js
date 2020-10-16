@@ -1,6 +1,13 @@
 let keyPressed
 let clock = 0
 
+const oppositeDirections = {
+  'LEFT': 'RIGHT',
+  'RIGHT': 'LEFT',
+  'UP': 'DOWN',
+  'DOWN': 'UP'
+}
+
 const keyboardKeys = {
   37: 'LEFT',
   38: 'UP',
@@ -24,9 +31,9 @@ function flipflop() {
 }
 
 function process() {
-  if (snake.status == "ALIVE") {
+  if (!gm.snake.isDead) {
     if (flipflop()) {
-      canvas.renderAll();
+      gm.renderGame();
     } else {
       keyPressed = false;
       gm.computeMovement()
@@ -37,7 +44,6 @@ function process() {
   }
 }
 
-const canvas = new Canvas(WIDTH, HEIGHT)
 const gm = new GM()
 gm.reset();
 setInterval(process, UPDATE_INTERVAL / 2);

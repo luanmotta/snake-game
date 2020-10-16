@@ -3,67 +3,47 @@ const scoreElement        = document.getElementById("score")
 const recordElement       = document.getElementById("record")
 const canvasElement       = document.getElementById("canvas");
 
-var ctx
-
 class Canvas {
   constructor(width, height) {
-    ctx = canvasElement.getContext("2d");
+    this.ctx = canvasElement.getContext("2d");
+    this.width = width
+    this.height = height
     canvasElement.width  = width;
     canvasElement.height = height;
   }
-  renderAll() {
-    renderArena();
-    renderSnake();
-    renderFood();
+  renderAll(foodsEaten, score, record, snake, food) {
+    this.renderArena();
+    this.renderSnake(snake);
+    this.renderFood(food);
     foodElement.innerHTML = `Foods Eaten: ${foodsEaten}`;
     scoreElement.innerHTML = `Score: ${score}`;
-    recordElement.innerHTML = `Record: ${localStorage.record}`;
+    recordElement.innerHTML = `Record: ${record}`;
   }
-}
-
-function renderAll() {
-  renderArena();
-  renderSnake();
-  renderFood();
-  foodElement.innerHTML = `Foods Eaten: ${foodsEaten}`;
-  scoreElement.innerHTML = `Score: ${score}`;
-  recordElement.innerHTML = `Record: ${localStorage.record}`;
-}
-
-const renderMessage = (content, color) => {
-  ctx.fillStyle = color;
-  ctx.font = "24px Helvetica";
-  ctx.textAlign = "left";
-  ctx.textBaseline = "top";
-  ctx.fillText(content, 32, 32);
-}
-
-function renderFood(){
-  ctx.beginPath();
-  ctx.rect(food.x * PIXEL_SIZE,food.y * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
-  ctx.closePath();
-  ctx.fillStyle = "green";
-  ctx.fill();
-  ctx.stroke();
-}
-
-function renderSnake() {
-  snake.blocks.forEach(function (block, index) {
-    ctx.beginPath();
-    ctx.rect(block.x * PIXEL_SIZE, block.y * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
-    ctx.closePath();
-    ctx.fillStyle = snakeColor(index + 1);
-    ctx.fill();
-    ctx.stroke();
-  });
-}
-
-function renderArena() {
-  ctx.beginPath();
-  ctx.rect(0, 0, WIDTH, HEIGHT);
-  ctx.closePath();
-  ctx.fillStyle = "white";
-  ctx.fill();
-  ctx.strokeStyle = "black";
-  ctx.stroke();
+  renderMessage(content, color) {
+    this.ctx.fillStyle = color;
+    this.ctx.font = "24px Helvetica";
+    this.ctx.textAlign = "left";
+    this.ctx.textBaseline = "top";
+    this.ctx.fillText(content, 32, 32);
+  }
+  _drawRect(d1, d2, d3, d4, fillStyle, strokeStyle) {
+    this.ctx.beginPath();
+    this.ctx.rect(d1, d2, d3, d4);
+    this.ctx.closePath();
+    this.ctx.fillStyle = fillStyle;
+    this.ctx.fill();
+    if (strokeStyle) this.ctx.strokeStyle = strokeStyle;
+    this.ctx.stroke();
+  }
+  renderArena() {
+    this._drawRect(0, 0, this.width, this.height, 'white', 'black')
+  }
+  renderFood(food) {
+    this._drawRect(food.x * PIXEL_SIZE, food.y * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE, 'green')
+  }
+  renderSnake(snake) {
+    snake.blocks.forEach((block, index) => {
+      this._drawRect(block.x * PIXEL_SIZE, block.y * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE, snake.snakeColor(index + 1))
+    });
+  }
 }

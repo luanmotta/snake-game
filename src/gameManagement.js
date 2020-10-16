@@ -6,52 +6,65 @@ const WIDTH           = PIXEL_SIZE * MATRIX_WIDTH
 const HEIGHT          = PIXEL_SIZE * MATRIX_HEIGHT
 const MARGIN          = PIXEL_SIZE * 0.2
 
-let foodsEaten          = 0
-let score               = 0
-var snake               = null
-var food
-
 class GM {
   constructor() {
-    //
+    this.canvas = new Canvas(WIDTH, HEIGHT)
+    this.record = localStorage.record
+  }
+
+  renderGame() {
+    this.canvas.renderAll(
+      this.foodsEaten,
+      this.score,
+      this.record,
+      this.snake,
+      this.food
+    )
   }
 
   manageKeyPress(key) {
-    switch (key) {
-      case 'LEFT':  if ( snake.direction != "RIGHT" ) this.changeSnakeDirection(key);  break;
-      case 'UP':    if ( snake.direction != "DOWN" )  this.changeSnakeDirection(key);  break;
-      case 'RIGHT': if ( snake.direction != "LEFT" )  this.changeSnakeDirection(key);  break;
-      case 'DOWN':  if ( snake.direction != "UP" )    this.changeSnakeDirection(key);  break;
-      case 'ENTER': this.reset();
+    if (key === 'ENTER') {
+      this.reset()
+    }
+    if (key !== oppositeDirections[this.snake.direction]) {
+      this.changeSnakeDirection(key)
     }
   }
 
   computeMovement() {
-    snake.move();
+    this.snake.move();
     this.tryToEat();
   }
 
   changeSnakeDirection(direction) {
-    snake.direction = direction
+    this.snake.direction = direction
   }
 
   tryToEat() {
-    if ( snake.blocks[0].x == food.x && snake.blocks[0].y == food.y ) {
-      foodEated()
-      foodsEaten++;
-      score = this.scoreFormula();
+    if (this.snake.blocks[0].x == this.food.x && this.snake.blocks[0].y == this.food.y) {
+      this.generateFood()
+      this.foodsEaten++;
+      this.score = this.scoreFormula();
     } else {
-      snake.blocks.pop();
+      this.snake.blocks.pop();
     }
   }
 
+  generateFood() {
+    this.food = {}
+    do {
+      this.food.x = Math.floor(Math.random() * MATRIX_WIDTH);
+      this.food.y = Math.floor(Math.random() * MATRIX_HEIGHT);
+    } while (this.snake.haveSnake(this.food.x, this.food.y));
+  }
 
   endGame() {
-    if (score < localStorage.record) {
-      renderMessage("You are dead!", "red");
+    if (this.score < localStorage.record) {
+      this.canvas.renderMessage("You are dead!", "red");
     } else {
-      localStorage.record = score;
-      renderMessage("New record!", "green");
+      localStorage.record = this.score;
+      this.record = this.score
+      this.canvas.renderMessage("New record!", "green");
     }
   }
 
@@ -59,15 +72,15 @@ class GM {
     if (localStorage.record == undefined) {
       localStorage.record = 0;
     }
-    snake = new Snake();
-    generateFood();
-    foodsEaten = 0;
-    score = 0;
+    this.snake = new Snake();
+    this.generateFood()
+    this.foodsEaten = 0;
+    this.score = 0;
   }
 
   scoreFormula () {
     return Math.round(
-      (foodsEaten * 500) / (MATRIX_WIDTH / 4) / (MATRIX_HEIGHT / 4) / (UPDATE_INTERVAL / 50)
+      (this.foodsEaten * 500) / (MATRIX_WIDTH / 4) / (MATRIX_HEIGHT / 4) / (UPDATE_INTERVAL / 50)
     );
   }
 }
