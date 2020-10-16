@@ -1,48 +1,18 @@
-var keyPressed,
-    clock               = 0,
-    foodsEaten          = 0,
-    foodElement         = document.getElementById("foodsEaten"),
-    scoreElement        = document.getElementById("score"),
-    recordElement       = document.getElementById("record"),
-    score               = 0;
-
-function reset() {
-  if (localStorage.record == undefined) localStorage.record = 0;
-  generateSnake();
-  generateFood();
-  foodsEaten = 0;
-  score = 0;
-}
-
-function init() {
-  var canvas = document.getElementById("canvas");
-  ctx = canvas.getContext("2d");
-  canvas.width  = WIDTH;
-  canvas.height = HEIGHT;
-  reset();
-  return setInterval(draw, updateInterval/2);
-}
+var keyPressed
+var clock = 0
 
 function doKeyDown(evt) {
   if (keyPressed == false) {
-    switch (evt.keyCode) {
-      case 38: if ( snake.direction != "DOWN" )  snake.direction = "UP";    break;
-      case 40: if ( snake.direction != "UP" )    snake.direction = "DOWN";  break;
-      case 37: if ( snake.direction != "RIGHT" ) snake.direction = "LEFT";  break;
-      case 39: if ( snake.direction != "LEFT" )  snake.direction = "RIGHT"; break;
-      case 13: reset();
+    const direction = keyboardKeys[evt.keyCode]
+    switch (direction) {
+      case 'LEFT':  if ( snake.direction != "RIGHT" ) gm.moveSnake(direction);  break;
+      case 'UP':    if ( snake.direction != "DOWN" )  gm.moveSnake(direction);  break;
+      case 'RIGHT': if ( snake.direction != "LEFT" )  gm.moveSnake(direction);  break;
+      case 'DOWN':  if ( snake.direction != "UP" )    gm.moveSnake(direction);  break;
+      case 'ENTER': gm.reset();
     }
   }
   keyPressed = true;
-}
-
-function renderAll() {
-  renderArena();
-  renderSnake();
-  renderFood();
-  foodElement.innerHTML = `Foods Eaten: ${foodsEaten}`;
-  scoreElement.innerHTML = `Score: ${score}`;
-  recordElement.innerHTML = `Record: ${localStorage.record}`;
 }
 
 function flipflop() {
@@ -51,41 +21,22 @@ function flipflop() {
   return clock;
 }
 
-function deadSneak() {
-  keyPressed = false;
-  if (score < localStorage.record) {
-    message("You are dead!", "red");
+function process() {
+  if (snake.status == "ALIVE") {
+    if (flipflop()) {
+      canvas.renderAll();
+    } else {
+      keyPressed = false;
+      gm.computeMovement()
+    }
   } else {
-    localStorage.record = score;
-    message("New record!", "green");
+    keyPressed = false;
+    gm.endGame();
   }
 }
 
-function tryEat() {
-  if ( snake.blocks[0].x == food.x && snake.blocks[0].y == food.y ) {
-
-    generateFood();
-    renderFood();
-    foodsEaten++;
-    score = scoreFormula();
-
-  }  else snake.blocks.pop();
-}
-
-
-function draw() {
-
-  if (snake.status == "ALIVE") {
-
-    if (flipflop()) {
-      renderAll();
-    } else {
-      moveSnake();
-      keyPressed = false;
-      tryEat();
-    }
-  } else deadSneak();
-}
-
-init();
+const canvas = new Canvas(WIDTH, HEIGHT)
+const gm = new GM()
+gm.reset();
+setInterval(process, UPDATE_INTERVAL / 2);
 window.addEventListener("keydown", doKeyDown, true);
