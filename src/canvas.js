@@ -4,12 +4,10 @@ const recordElement       = document.getElementById("record")
 const canvasElement       = document.getElementById("canvas");
 
 class Canvas {
-  constructor(width, height) {
+  constructor() {
     this.ctx = canvasElement.getContext("2d");
-    this.width = width
-    this.height = height
-    canvasElement.width  = width;
-    canvasElement.height = height;
+    canvasElement.width  = WIDTH;
+    canvasElement.height = HEIGHT;
   }
   renderAll(foodsEaten, score, record, snake, food) {
     this.renderArena();
@@ -36,7 +34,7 @@ class Canvas {
     this.ctx.stroke();
   }
   renderArena() {
-    this._drawRect(0, 0, this.width, this.height, 'white', 'black')
+    this._drawRect(0, 0, WIDTH, HEIGHT, 'white', 'black')
   }
   renderFood(food) {
     this._drawRect(food.x * PIXEL_SIZE, food.y * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE, 'green')

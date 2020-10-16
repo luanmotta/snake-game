@@ -8,7 +8,7 @@ const MARGIN          = PIXEL_SIZE * 0.2
 
 class GM {
   constructor() {
-    this.canvas = new Canvas(WIDTH, HEIGHT)
+    this.canvas = new Canvas()
     this.record = localStorage.record
   }
 

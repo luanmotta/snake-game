@@ -1,5 +1,5 @@
 class SnakeBlock {
-  constructor(x = MATRIX_WIDTH / 2, y = MATRIX_HEIGHT / 2) {
+  constructor(x, y) {
     this.x = x;
     this.y = y;
   }
@@ -10,7 +10,7 @@ class Snake {
     this.isDead = false;
     this.direction = undefined;
     this.blocks = [];
-    this.blocks[0] = new SnakeBlock();
+    this.blocks[0] = new SnakeBlock(MATRIX_WIDTH / 2, MATRIX_HEIGHT / 2);
     this.r = 0;
     this.g = 0;
     this.b = 0;
