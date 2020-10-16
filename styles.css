@@ -9,3 +9,12 @@ h2 {
 #foodsEaten {
   color: green;
 }
+
+.container {
+  display: flex;
+  align-items: left;
+}
+
+.stats {
+  margin-left: 30px;
+}

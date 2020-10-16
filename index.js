@@ -62,15 +62,15 @@ function deadSneak() {
 }
 
 function tryEat() {
-  if ( snake.blocks[0].x == food.x && snake.blocks[0].y == food.y ) { 
+  if ( snake.blocks[0].x == food.x && snake.blocks[0].y == food.y ) {
 
     generateFood();
     renderFood();
     foodsEaten++;
     score = scoreFormula();
 
-  }  else snake.blocks.pop();    
-}  
+  }  else snake.blocks.pop();
+}
 
 
 function draw() {
@@ -82,8 +82,8 @@ function draw() {
     } else {
       moveSnake();
       keyPressed = false;
-      tryEat();    
-    } 
+      tryEat();
+    }
   } else deadSneak();
 }
 

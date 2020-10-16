@@ -8,12 +8,18 @@
 
    </head>
    <body>
-      <canvas id="canvas">
-          This text is displayed if your browser does not support HTML5 Canvas.
-      </canvas>
-      <h2 id="score"></h2>
-      <h2 id="foodsEaten"></h2>
-      <h2 id="record"></h2>
+      <div class="container">
+         <div>
+            <canvas id="canvas">
+                This text is displayed if your browser does not support HTML5 Canvas.
+            </canvas>
+         </div>
+         <div class="stats">
+            <h2 id="score"></h2>
+            <h2 id="foodsEaten"></h2>
+            <h2 id="record"></h2>
+         </div>
+      </div>
 
       <script src="global.js"></script>
       <script src="controllers/arena.js"></script>

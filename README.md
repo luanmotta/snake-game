@@ -1,3 +1,3 @@
 # snake-game
 
-O clássico jogo da cobrinha.
+The classic snake game
