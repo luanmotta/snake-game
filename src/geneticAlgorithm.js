@@ -68,5 +68,6 @@ function poolSelection(games) {
 
   // Make sure it's a copy!
   // (this includes mutation)
-  return games[index].snake.copy();
+  games[index].snake = games[index].snake.copy();
+  return games[index]
 }

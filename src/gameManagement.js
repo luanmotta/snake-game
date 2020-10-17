@@ -1,4 +1,4 @@
-const UPDATE_INTERVAL = 100
+const UPDATE_INTERVAL = 500
 const PIXEL_SIZE      = 30
 const MATRIX_WIDTH    = 16
 const MATRIX_HEIGHT   = 16
@@ -9,7 +9,6 @@ const MARGIN          = PIXEL_SIZE * 0.2
 class GM {
   constructor() {
     this.canvas = new Canvas()
-    this.record = localStorage.record
   }
 
   renderGame() {
@@ -54,19 +53,18 @@ class GM {
 
   endGame() {
     this.fitness = this.score
-    if (this.score < localStorage.record) {
+    if (this.score < this.record) {
       // this.canvas.renderMessage("You are dead!", "red");
     } else {
-      localStorage.record = this.score;
       this.record = this.score
       // this.canvas.renderMessage("New record!", "green");
     }
+    this.foodsEaten = 0;
+    this.score = 0;
   }
 
-  reset() {
-    if (localStorage.record == undefined) {
-      localStorage.record = 0;
-    }
+  start() {
+    this.record = 0;
     this.snake = new Snake();
     this.generateFood()
     this.foodsEaten = 0;
